@@ -1,0 +1,18 @@
+body {text-align: center;}
+p {text-align:center; margin-top:0px; font-size:25px;}
+.ex {margin: 0 auto;}
+.ex1 {margin:0 auto; width:950px; height:25px; background:rgba(246,244,219,1); 
+border:3px solid rgba(246,244,219,1); border-radius: 5px; line-height:15px; padding-top:10px;}
+.ex2 {margin: 0 auto; margin-top:-6px; width:950px; height:260px; display: block; padding-top:1px; background:rgba(211,211,211,1);
+border:3px solid rgba(152,186,151,1); border-radius: 5px;}
+.ex3 {vertical-align:top; display: inline-block; margin:7px; width: 210px; height:209px; 
+background:rgba(152,186,151,1); border:3px solid rgba(152,186,151,1); border-radius: 10px;}
+.ex4 {margin:-1px; width:208px; height:50px; background:grey; border:3px solid rgba(152,186,151,1); border-radius: 15px;}
+.ex5 {margin:-1px; width:208px; height:150px; background:grey; border:3px solid rgba(152,186,151,1); border-radius: 15px;}
+.ex6 {margin: 0 auto; display: block; padding-top:5px; width:900px; height:500px;} 
+.ex7 {padding:8px; vertical-align:middle; display: inline-block; margin:5px; background:rgba(211,211,211,1); border:3px solid rgba(152,186,151,1); border-radius: 5px;}
+.slider {margin-top:-20px; width:140px;}
+.filter {margin-top:5px; margin-bottom:10px; font-size:20px;}
+.checkBox {float:right; margin-top:-25px; margin-right:50px;}
+#selectImg {margin-top:10px;}
+#filtButton {margin-top:9px; font:18px solid; background: rgba(152,186,151,1); border: 3px solid rgba(152,186,151,1)}

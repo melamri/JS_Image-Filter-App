@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Image Filters</title>
+	<link rel="stylesheet" href="imageFilter.css">
+	<script src="rgb-hsv_converter.js"></script>
+</head>
+<body>
+	<script type="text/javascript">
+		var minHue,maxHue;
+		var test=0;
+		var filter1 = [0,0,0];
+		var filter2 = [0,0,0];
+		var filter3 = [0,0,0];
+		function request(){
+			var xmlhttp=new XMLHttpRequest( );
+			xmlhttp.onreadystatechange=function( ){
+				if (xmlhttp.readyState==4 && xmlhttp.status==200){
+					var xmlDoc = xmlhttp.responseText;
+					var txt="";
+					var imgList = xmlDoc.split("\n");
+					for(var i=0;i<imgList.length;i++){	
+						txt += "<option value=\""+ imgList[i] +"\">"+imgList[i]+"</option> <br />";
+					}
+					document.getElementById("selectImg").innerHTML = txt;
+				}
+			}
+			xmlhttp.open("GET","images.txt",true);
+			xmlhttp.send( );
+		}
+		request();
+	</script>
+	
+	<div class="ex">
+		<div class="ex1">
+			<p>Multiple Image Filters</p>
+		<div>
+		<div class="ex2">
+			<div class="ex3">
+				<div class="ex4">
+					<p class="filter">Filter 1</p>
+					<script>
+					document.write('<input name="filters" class="checkBox" type="checkbox" value="' + filter1 + '" />');
+					</script>
+					<input type="range" class="slider" min="0" max="360" value="36" step="1" onchange='filter1 = drawDials(c,c2,imgd,this.value)' />
+				</div>
+				<div class="ex5">
+					<canvas id="layer1" width="160" height="160">
+						Your browser does not support the canvas element.
+					</canvas>
+				</div>
+			</div>
+			<div class="ex3">
+				<div class="ex4">
+					<p class="filter">Filter 2</p>
+					<script>
+					document.write('<input name="filters" class="checkBox" type="checkbox" value="' + filter2 + '" />');
+					</script>
+					<input type="range" class="slider" min="0" max="360" value="36" step="1" onchange='filter2 = drawDials(c21,c22,imgd,this.value)' />
+				</div>
+				<div class="ex5">
+					<canvas id="layer2" width="160" height="160">
+						Your browser does not support the canvas element.
+					</canvas>
+				</div>
+			</div>
+			<div class="ex3">
+				<div class="ex4">
+					<p class="filter">Filter 3</p>
+					<script>
+					document.write('<input name="filters" class="checkBox" type="checkbox" value="' + filter3 + '" />');
+					</script>
+					<input type="range" class="slider" min="0" max="360" value="36" step="1" onchange='filter3=drawDials(c31,c32,imgd,this.value)' />
+				</div>
+				<div class="ex5">
+					<canvas id="layer3" width="160" height="160">
+						Your browser does not support the canvas element.
+					</canvas>
+				</div>
+			</div>
+			<div class="ex3">
+				<div class="ex4">
+					<p class="filter">Filter Ranges</p>
+					<input type="range" class="slider" min="0" max="160" value="16" step="1" onchange='filterRange(this.value)' />
+				</div>
+				<div class="ex5">
+					<p class="filter"><br><br>Select Image</p>
+					<select id="selectImg" onchange="changePic();"></select>
+				</div>
+				
+				<button type="button" id="filtButton" onClick="getFilters()">-- Filter --</button> 
+
+			</div>
+			<br>
+		</div>
+		<div class="ex6">
+			<div class="ex7">
+				<div class="Absolute-Center">
+					<canvas id="pic1" width="345" height="345">
+						Your browser does not support the canvas element.
+					</canvas>
+				</div>
+			<!--<script type="text/javascript">changePic();</script>-->
+			</div>
+			<div class="ex7">
+				<div class="Absolute-Center">
+					<canvas id="pic2" width="345" height="345">
+						Your browser does not support the canvas element.
+					</canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<script type="text/javascript">				
+		var canv=document.getElementById("layer1");
+		var canv2=document.getElementById("layer2");
+		var canv3=document.getElementById("layer3");
+		var	c = canv.getContext("2d");
+		var	c2 = canv.getContext("2d");
+		var c21=canv2.getContext("2d");
+		var c22=canv2.getContext("2d");
+		var c31=canv3.getContext("2d");
+		var c32=canv3.getContext("2d");
+		var width=160;
+		var height=160;
+		var imgd = c.createImageData(width,height);
+		var r = 30;
+		var dialA =0;
+		var cx = 80;
+		var cy = 75;
+		
+		function drawC(ctx, imgdata){
+			var arcLength = 0;
+			var angle=0;
+			var x, y;
+			var px = imgdata.data;
+			var i=0;
+			var j=0;
+			var w=0;
+			for(r;r<60;r++){
+				for(var i=0;i<1000;i++){
+					angle = i*180/Math.PI;
+					x = parseInt(cx+r*Math.cos(angle));
+					y = parseInt(cy+r*Math.sin(angle));
+					arcLength = angle*r;
+					w = 2*Math.PI*r;
+					rgbCol = hsvToRgb(arcLength/w, 1, 1);
+					j = (x+y*width)*4;
+					px[j  ] = rgbCol[0];
+					px[j+1] = rgbCol[1];
+					px[j+2] = rgbCol[2];
+					px[j+3] = 255;
+				}
+			}
+			ctx.putImageData(imgdata, 0, 0);
+		}
+		drawC(c,imgd);	
+		drawC(c21,imgd);	
+		drawC(c31,imgd);	
+		
+		function drawDials(ctx1, ctx2, imgdata,newValue){
+			var sliderVal = parseInt(newValue);
+			ctx2.clearRect(0, 0, width, height);
+			ctx1.putImageData(imgdata, 0, 0);
+			ctx2.beginPath();
+			ctx2.moveTo(cx,cy);
+			var sliderA1 = sliderVal*Math.PI/180;
+			var xDial = parseInt(cx+r*Math.cos(sliderA1));
+			var yDial = parseInt(cy+r*Math.sin(sliderA1));
+			ctx2.lineTo(xDial,yDial);
+			ctx2.stroke();
+			ctx2.closePath();
+			ctx2.beginPath();
+			ctx2.moveTo(cx,cy);
+			dial2 = (sliderVal+dialA)%360;
+			var sliderA2 = (dial2)*Math.PI/180;
+			xDial2 = parseInt(cx+r*Math.cos(sliderA2));
+			yDial2 = parseInt(cy+r*Math.sin(sliderA2));
+			ctx2.lineTo(xDial2,yDial2);
+			ctx2.stroke();
+			ctx2.closePath();
+			minHue = sliderA1/(2*Math.PI);
+			maxHue = sliderA2/(2*Math.PI);
+			return[minHue,maxHue,sliderVal];
+		}
+		drawDials(c,c2,imgd,filter1[2]);
+		drawDials(c21,c22,imgd,filter2[2]);
+		drawDials(c31,c32,imgd,filter3[2]);
+
+		function filterRange(val){
+			dialA = parseInt(val);
+			filter1 = drawDials(c,c2,imgd,filter1[2]);
+			filter2 = drawDials(c21,c22,imgd,filter2[2]);
+			filter3 = drawDials(c31,c32,imgd,filter3[2]);
+		}
+					
+		var selectedPic = "images/LondonEye_TinyPlanet.jpg";
+		function getFilters(){
+			var filtData = document.getElementsByName("filters");
+			var filtArr = new Array();
+			if( filtData[0].checked )
+				filtArr.push(filter1);
+			if( filtData[1].checked )
+				filtArr.push(filter2);
+			if( filtData[2].checked )
+				filtArr.push(filter3);
+			var canv=document.getElementById("pic2");
+			var c=canv.getContext("2d");
+			var c2=canv.getContext("2d");
+			c2.font = '15pt Georgia';
+			c.clearRect(0, 0, canv.width, canv.height);
+			if(filtArr.length != 0){
+				var picSelect = document.getElementById("selectImg");
+				if(typeof(picSelect.options[picSelect.selectedIndex]) != 'undefined'){
+					selectedPic = picSelect.options[picSelect.selectedIndex].value;
+				}
+				var img = new Image(); 
+				var w, h;
+				var factor;
+				img.onload = function(){
+					var side = Math.max(this.height, this.width);
+					var factor = 345/side;		//determine scaling factor based on the longest side
+					h = this.height * factor;	//scaling the image
+					w = this.width * factor;
+					canv.width = w;			// resize the canvas to the new image size
+					canv.height = h;
+					c.drawImage(img, 0, 0, w, h );
+					var imgd  = c.getImageData(0, 0, canv.width, canv.height);
+					var px = imgd.data;
+					var hsv;
+					var min, max
+					var temp;
+					var count=0;
+					for(var i=0;i< px.length;i+=4){
+						hsv = rgbToHsv(px[i],px[i+1],px[i+2])
+						for(var j=0;j<filtArr.length;j++){
+							temp=filtArr[j];
+							min = Math.min(temp[0],temp[1]);
+							max = Math.max(temp[0],temp[1]);
+							if(min<hsv[0] && hsv[0]<max){
+								count+=1;
+							}
+						}
+						if(count<1){
+							px[i] = 0;
+							px[i+1] = 0;
+							px[i+2] = 0;
+						
+						}
+						count=0;
+					}		
+					c.putImageData(imgd,0,0);
+					c2.fillStyle = 'rgba(152,186,151,1)';
+					c2.fillText("Ikbel Amri",10,10);
+				}
+				img.src = selectedPic;
+			}
+			else{
+				c2.fillStyle = 'black';
+				c.fillRect(0, 0, canv.width, canv.height);
+				c2.fillStyle = 'rgba(152,186,151,1)';
+				c2.fillText("Ikbel Amri",10,20);
+			}
+		}
+		
+		function changePic(){
+			getFilters();
+			var picSelect = document.getElementById("selectImg");
+			if(typeof(picSelect.options[picSelect.selectedIndex]) != 'undefined'){
+				selectedPic = picSelect.options[picSelect.selectedIndex].value;
+			}
+			var canv=document.getElementById("pic1");
+            var c=canv.getContext("2d");
+			var c2=canv.getContext("2d");
+			c2.font = '15pt Georgia';
+			c2.fillStyle = 'rgba(152,186,151,1)';
+			c.clearRect(0, 0, canv.width, canv.height);
+            var img = new Image();  
+            var w, h;
+			var factor;  
+            img.onload = function(){
+				var side = Math.max(this.height, this.width);
+				var factor = 345/side;		//determine scaling factor based on the longest side
+                h = this.height * factor;	//scaling the image
+                w = this.width * factor;    
+				canv.width = w;			// resize the canvas to the new image size
+				canv.height = h;
+                c.drawImage(img, 0, 0, w, h );
+				c2.fillStyle = 'rgba(152,186,151,1)';
+				c2.fillText("Ikbel Amri",10,10);
+            }
+			img.src = selectedPic;
+        }
+		filterRange(16);
+		changePic();
+	</script>
+</body>
+
+</html>
